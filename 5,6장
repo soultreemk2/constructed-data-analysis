@@ -1,0 +1,73 @@
+**5장 LDA & QDA**
+
+#### 타이타닉 data에 대한 LDA 적합 ####
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+cld=LinearDiscriminantAnalysis(store_covariance=True)
+cld.fit(X_train, y_train) # LDA 적합
+
+y_train_pred=cld.predict(X_train)
+y_test_pred=cld.predict(X_test)
+
+from sklearn.metrics import accuracy_score
+
+print(accuracy_score(y_train, y_train_pred)) # train data에 대한 accuracy
+print(accuracy_score(y_test, y_test_pred)) # test data에 대한 accuracy
+
+
+# 분류 결과
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_test, y_test_pred))  # 각 행은 survived=0, survived=1
+
+#### 타이타닉 data에 대한 QDA적합 ####
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+
+cqd=QuadraticDiscriminantAnalysis(store_covariance=True)
+cqd.fit(X_train, y_train) # QDA 적합
+
+
+y_train_pred=cqd.predict(X_train)
+y_test_pred=cqd.predict(X_test)
+
+from sklearn.metrics import accuracy_score
+print(accuracy_score(y_train, y_train_pred)) # train data에 대한 accuracy
+print(accuracy_score(y_test, y_test_pred)) # test data에 대한 accuracy
+
+# 분류 결과
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_test, y_test_pred))
+
+
+
+**6장. Classification Tree**
+
+# Classification Tree  -- tree를 하나만 쌓아서 예측한 경우 / tree를 각종 방식으로 여러개 결합한 것이 앙상블학습
+
+from sklearn import tree  # 또는 from sklearn import DecisionTreeClassifier
+
+dtc = tree.DecisionTreeClassifier(criterion='gini', max_depth=10, random_state=1)
+dtc.fit(X_train, y_train)
+y_train_pred = dtc.predict(X_train)  #  accuracy
+y_test_pred = dtc.predict(X_test)    # Test accuracy
+
+tree.plot_tree(dtc.fit(X_train,y_train))
+
+# Accuracy score
+from sklearn import metrics
+print(metrics.accuracy_score(y_train, y_train_pred))
+print(metrics.accuracy_score(y_test, y_test_pred))
+
+# Confusion matrix
+print(metrics.confusion_matrix(y_test, y_test_pred))
+
+
+max_depth를 바꿔가면서 해보면...
+mx_depth가 높을수록 accuracy가 향상되는 것은 아님  
+하지만 10정도로 높이면 3보다는 accuracy가 높아지긴 함
+
+
+
+
+
+
+
