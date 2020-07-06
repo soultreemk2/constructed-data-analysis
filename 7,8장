@@ -1,0 +1,155 @@
+**7장 SVM**
+1. kernel=linear인 경우  
+
+참고) StandardScaler를 적용한 X_train_std 데이터로 학습하나, 표준화하지 않은 X_train으로 학습하나  
+accuracy는 완전 똑같음.... 왜지?
+
+
+from sklearn.svm import SVC #SVM함수의 호출
+
+svm=SVC(kernel='linear',C=1.0,random_state=1)
+svm.fit(X_train_std,y_train) #SVM추정
+
+y_train_pred=svm.predict(X_train_std) #train set의 y 예측치 구하기
+y_test_pred=svm.predict(X_test_std)  #test set의 y예측치 구하기
+
+from sklearn import metrics
+print(metrics.accuracy_score(y_train,y_train_pred))   # train set의 accuracy ratio
+print(metrics.accuracy_score(y_test,y_test_pred))    # test set의 accuracy ratio
+
+metrics.confusion_matrix(y_test,y_test_pred)  # confusion_matrix
+
+from sklearn import metrics
+print(metrics.classification_report(y_test,y_test_pred))   #classification_report
+
+
+2. kernel=poly인 경우(표준화 하면 accuracy 훨씬 증가)
+
+-- 표준화 하지 않은 데이터로 학습
+
+from sklearn.svm import SVC #SVM함수의 호출
+
+svm=SVC(kernel='poly',C=1.0,random_state=1)
+
+svm.fit(X_train,y_train) #SVM추정
+
+y_train_pred=svm.predict(X_train) #train set의 y 예측치 구하기
+y_test_pred=svm.predict(X_test)  #test set의 y예측치 구하기
+
+print(metrics.accuracy_score(y_train,y_train_pred))
+print(metrics.accuracy_score(y_test,y_test_pred))    # test set의 accuracy ratio
+
+metrics.confusion_matrix(y_test,y_test_pred)  # confusion_matrix
+
+from sklearn import metrics
+print(metrics.classification_report(y_test,y_test_pred))   #classification_report
+
+
+-- 표준화 한 데이터로 학습
+
+from sklearn.svm import SVC #SVM함수의 호출
+
+svm=SVC(kernel='poly',C=1.0,random_state=1)
+
+svm.fit(X_train_std,y_train) #SVM추정
+
+y_train_pred=svm.predict(X_train_std) #train set의 y 예측치 구하기
+y_test_pred=svm.predict(X_test_std)  #test set의 y예측치 구하기
+
+print(metrics.accuracy_score(y_train,y_train_pred))
+print(metrics.accuracy_score(y_test,y_test_pred))    # test set의 accuracy ratio
+
+from sklearn import metrics
+print(metrics.classification_report(y_test,y_test_pred))   #classification_report
+
+
+3. kernel=rbf인 경우 (기본값)
+
+from sklearn.svm import SVC #SVM함수의 호출
+
+svm=SVC(kernel='rbf',C=2.0,gamma = 0.5, random_state=1)
+
+svm.fit(X_train,y_train) #SVM추정
+
+y_train_pred=svm.predict(X_train) #train set의 y 예측치 구하기
+y_test_pred=svm.predict(X_test)  #test set의 y예측치 구하기
+
+print(metrics.accuracy_score(y_train,y_train_pred))
+print(metrics.accuracy_score(y_test,y_test_pred)) 
+
+from sklearn import metrics
+print(metrics.classification_report(y_test,y_test_pred))   #classification_report
+
+
+완전 overfitting.....  --> 표준화 시키면 훨씬 나아짐 
+
+
+## 표준화 시킨 데이터 학습
+
+from sklearn.svm import SVC #SVM함수의 호출
+
+svm=SVC(kernel='rbf',C=2.0,gamma = 0.5, random_state=1)
+
+svm.fit(X_train_std,y_train) #SVM추정
+
+y_train_pred=svm.predict(X_train_std) #train set의 y 예측치 구하기
+y_test_pred=svm.predict(X_test_std)  #test set의 y예측치 구하기
+
+
+print(metrics.accuracy_score(y_train,y_train_pred))
+print(metrics.accuracy_score(y_test,y_test_pred))    # test set의 accuracy ratio
+
+from sklearn import metrics
+print(metrics.classification_report(y_test,y_test_pred))   #classification_report
+
+gamma와 C값 조정해보기
+
+from sklearn.svm import SVC #SVM함수의 호출
+
+svm=SVC(kernel='rbf',C=1.0,gamma = 0.2, random_state=1)
+
+svm.fit(X_train_std, y_train) #SVM추정
+
+y_train_pred=svm.predict(X_train_std) #train set의 y 예측치 구하기
+y_test_pred=svm.predict(X_test_std)  #test set의 y예측치 구하기
+
+print(metrics.accuracy_score(y_train,y_train_pred))
+print(metrics.accuracy_score(y_test,y_test_pred))    # test set의 accuracy ratio
+
+from sklearn import metrics
+print(metrics.classification_report(y_test,y_test_pred))   #classification_report
+
+
+4. GridSearch 사용
+
+
+from sklearn.model_selection import GridSearchCV
+#커널 SVM을 이용 & 커널함수:방사형기저함수(kernel='rbf')를 사용
+#방사기저함수의 최적화 gamma와 완화변수의 허용정도 c를 찾기위해 'GridSearchCV' 모듈 사용
+
+param_grid={'C':[1e3,5e3,1e4,5e4,1e5],
+            'gamma':[0.0001,0.0005,0.001,0.005,0.01,0.1]}
+
+clf=GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid, cv=5)   
+clf.fit(X_train_std,y_train)
+
+print(clf.best_params_)            # 추정 parameter
+print(clf.best_estimator_)         
+
+
+#학습된 결과를 시험데이터에 적용하여 classification_report
+
+y_fit=clf.predict(X_test_std)
+
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix        #confusion matrix를 출력
+print(classification_report(y_test,y_fit))
+print(confusion_matrix(y_test,y_fit))
+
+print(metrics.accuracy_score(y_test,y_fit))    # test set의 accuracy ratio
+
+
+그리드 서치로 찾은 파라미터값으로 돌린 모델이 꼭 성능이 가장 높은 건 아닌듯....?
+
+
+
