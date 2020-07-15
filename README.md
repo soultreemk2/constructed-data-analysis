@@ -1,3 +1,5 @@
+bank marketing dataset 재구성 --- EDA파트 추가 
+
 ```python
 import pandas as pd
 import numpy as np
