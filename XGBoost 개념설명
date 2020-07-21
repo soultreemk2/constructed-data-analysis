@@ -1,0 +1,29 @@
+XGBoost는 여러개의 Decision Tree를 조합해서 사용하는 Ensemble 알고리즘
+Ensemble은 방식에 따라서 Bagging / Boosting 으로 분류됨
+
+1. Bagging vs Boosting
+둘의 차이 - https://bcho.tistory.com/1354
+          - https://lsjsj92.tistory.com/543?category=853217
+
+* Bagging의 대표적인 예 random forest
+- 여러개의 decision tree를 생성하여, 각자의 방식으로 데이터를 샘플링하여 개별적으로 학습
+   -> 최종적으로 voting을 통해 예측 수행
+- 랜덤포레스트는 각자의 classifier를 가지고 훈련을 하지만, 각 학습하는 dataset은 original dataset에서 sampling하여 가져옴
+  (이를 bootstraping이라고 하고 각 boostrap은 데이터가 중복될 수 있음)
+
+https://lsjsj92.tistory.com/542?category=853217
+
+* Boosting
+Bagging은 여러 개의 단일 모델을 만들고, bootstrap과정으로 데이터를 랜덤 추출 & 각자의 모델 훈련 --> 최종 voting을 통해 예측
+but  Boosting은 앞에서 예측한 분류기가 틀린 부분에 대해 가중치를 부여 --> 틀린부분을 더 잘 맞출 수 있도록 함
+Bagging과 유사하게 초기 샘플 데이터를 뽑아내고 다수의 classifier를 생성한다는 것은 비슷하나, 훈련과정에서 앞 모델이 틀린 부분에 가중치를 부여하며 진행하는 것이 다름
+(week classifier를 여러개 모아 strong classifier를 생성하는 방법)
+
+
+
+2. XGBoost
+XGBoost는 gradient boosting 알고리즘을 사용함.
+gradient boosting은, 이전 모델들의 오차 또는 잔차를 예측하는 새로운 모델을 생성 한 후 최종 예측을 하기 위해
+이전 모델과 새로운 모델을 합친다. 여기서 새로운 모델들을 더할 때 오차를 최소화 시키기 위해 gradient descent 알고리즘을 사용함
+
+이론설명: https://towardsdatascience.com/https-medium-com-vishalmorde-xgboost-algorithm-long-she-may-rein-edd9f99be63d
